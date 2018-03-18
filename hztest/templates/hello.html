@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Locust压测调度</title>
+    <!--<script type="text/javascript">-->
+    <!--var j=0;-->
+
+    <!--function addFileUploads(client_id){-->
+        <!--var fileParentNode=document.getElementById(client_id);-->
+        <!--var divNode=document.createElement("div");-->
+        <!--var inputFileNode=document.createElement("input");-->
+        <!--inputFileNode.id=client_id;-->
+        <!--inputFileNode.type="file";-->
+        <!--inputFileNode.name=client_id;-->
+        <!--divNode.appendChild(inputFileNode);-->
+        <!--fileParentNode.appendChild(divNode);-->
+        <!--j++;-->
+    <!--}-->
+    <!--</script>-->
+</head>
+<body>
+<h1>{{hello}}</h1>
+<form enctype="multipart/form-data" action="/" method="post">
+    <input type="submit" value="刷新客户端列表" name="get_clients">&nbsp;&nbsp;<input type="checkbox" name="mon_clients">监听客户端资源<br>
+    当前有{{clients.num}}个客户端！<br>
+    <table border="1">
+        {% for client in clients.clients %}
+        <tr>
+            <td>
+                Client ID：{{client.id}}
+            </td>
+            <td>
+                <!--<div id="{{client.id}}">-->
+                <!--<div style="">-->
+                <!--<input type="file" id="{{client.id}}" name="{{client.id}}"/>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--<input class="input" type="button" onclick="addFileUploads('{{client.id}}')" value="添加"/>-->
+
+                压测脚本(可多选)：<br>
+                <input type="file" name="{{client.id}}" accept=".py" style="width:200px;" multiple><br>
+                {% if text == client.id %}
+                    <textarea name="text{{client.id}}">{{script}}</textarea>
+                    <input hidden name="filename" value="{{filename}}">
+                    <br>
+                {% endif %}
+                <div align="right">
+                    <input type="submit" name="edit{{client.id}}" value="编辑">
+                    <input type="submit" name="send{{client.id}}" value="发送">
+                </div>
+            </td>
+            <td>
+                <input type="submit" name="filelist{{client.id}}" value="获取脚本列表"><input type="submit" name="clear{{client.id}}" value="清空文件夹" onclick="return confirm('确定清空脚本文件夹吗?')"><br>
+                {% for f in filelist %}
+                    {% if f.id == client.id %}
+                        <select name="fileselect{{client.id}}" multiple>
+                            {% for file in f.file_list %}
+                                <option value="{{file}}">{{file}}</option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                设置压测进程数：<br>
+                <input type="number" name="num{{client.id}}" value="1" style="width:30px;">
+                <input type="submit" name="run{{client.id}}" value="{{client.state}}"><br>
+                当前压测进程数：{{client.slave_num}}
+            </td>
+
+                {% for psinfo in psinfos %}
+                    {% if psinfo.id == client.id %}
+                     <td>
+                         客户端IP[{{psinfo.psinfo.IP}}]<br>
+                         CPU[核数:{{psinfo.psinfo.cpu.num}}, 线程数:{{psinfo.psinfo.cpu.logical_num}}, 使用率:{{psinfo.psinfo.cpu.percent}}%;
+                         {% if psinfo.psinfo.cpu.freq.current != 0 %}
+                            频率(当前:{{psinfo.psinfo.cpu.freq.current}}MHz, 最小:{{psinfo.psinfo.cpu.freq.min}}MHz, 最大:{{psinfo.psinfo.cpu.freq.max}}MHz)
+                         {% endif %}
+                         ]<br>
+                        内存[总数:{{psinfo.psinfo.mem.total}}MB, 可用:{{psinfo.psinfo.mem.available}}MB, 使用率:{{psinfo.psinfo.mem.percent}}%]<br>
+                        网络[发送:{{psinfo.psinfo.net.sent}}KB, {{psinfo.psinfo.net.per_sec_sent}}KB/s; 接收:{{psinfo.psinfo.net.recv}}KB, {{psinfo.psinfo.net.per_sec_recv}}KB/s]
+                     </td>
+                    {% endif %}
+                {% endfor %}
+
+        </tr>
+        {% endfor %}
+    </table>
+    {% if locust == 'stop' %}
+    <input type="submit" value="启动Locust Master服务" name="start_locust">
+    {% endif %}
+
+    {% if locust == 'run' %}
+        <input type="submit" value="停止Locust Master服务" name="stop_locust">
+    {% endif %}
+</form>
+</body>
+</html>
