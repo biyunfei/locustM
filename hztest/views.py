@@ -155,7 +155,7 @@ def hello(request):
         global locust_status, p, locust_script, script_filename
         context = dict()
         context['filelist'] = []
-        context['hello'] = 'Hello!'
+        context['hello'] = 'Clients list OK!'
         context['script'] = ''
         context['text'] = ''
         context['clients'] = refresh_clients()
@@ -227,11 +227,15 @@ def hello(request):
                         break
 
                 # 获取客户端系统资源利用率
-                if request.POST.get('mon_clients', None):
+                if request.POST.get('mon_clients', False):
                     psinfo = []
                     for c in context['clients']['clients']:
                         psinfo.append(get_psinfo(c['id']))
                     context['psinfos'] = psinfo
+                    context['mon_flag'] = "Checked"
+                    context['hello'] = "Clients's monitor data refresh OK！"
+                else:
+                    context['mon_flag'] = ""
 
             # 启动/停止Locust Master
             if 'start_locust' in request.POST or 'stop_locust' in request.POST:
@@ -276,6 +280,8 @@ def hello(request):
                         context['hello'] = 'Locust master has been running!'
                         locust_status = 'run'
         context['locust'] = locust_status
+        host = request.get_host()
+        context['host'] = host.split(':')[0]
         return render(request, 'hello.html', context)
 
 

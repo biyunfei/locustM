@@ -3,42 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Locust压测调度</title>
-    <!--<script type="text/javascript">-->
-    <!--var j=0;-->
-
-    <!--function addFileUploads(client_id){-->
-        <!--var fileParentNode=document.getElementById(client_id);-->
-        <!--var divNode=document.createElement("div");-->
-        <!--var inputFileNode=document.createElement("input");-->
-        <!--inputFileNode.id=client_id;-->
-        <!--inputFileNode.type="file";-->
-        <!--inputFileNode.name=client_id;-->
-        <!--divNode.appendChild(inputFileNode);-->
-        <!--fileParentNode.appendChild(divNode);-->
-        <!--j++;-->
-    <!--}-->
-    <!--</script>-->
 </head>
 <body>
-<h1>{{hello}}</h1>
+<h3>{{hello}}</h3>
+<h5>操作说明：<br>
+1.每个压测客户端单独设置运行步骤：<br>
+    a)发送压测脚本(可多选，单个可以编辑后再发送至客户端)<br>
+    b)选择压测脚本(多选则一个进程运行一个脚本，单选则所有进程用同一脚本)<br>
+    c)设置压测进程数(0代表CPU逻辑核心总数)，点击ready启动客户机压测进程；<br>
+2.启动Locust Master服务；<br>
+3.打开locust控制WEB：<a href="http://{{host}}:8089" target="_blank">http://{{host}}:8089</a><br>
+4.测试完成点击各客户端running按钮停止，更换压测脚本，重新启动客户端压测进程；
+</h5>
 <form enctype="multipart/form-data" action="/" method="post">
-    <input type="submit" value="刷新客户端列表" name="get_clients">&nbsp;&nbsp;<input type="checkbox" name="mon_clients">监听客户端资源<br>
+    <input type="submit" value="刷新客户端列表" name="get_clients">&nbsp;&nbsp;<input type="checkbox" name="mon_clients" {{mon_flag}}>监听客户端资源<br>
     当前有{{clients.num}}个客户端！<br>
     <table border="1">
         {% for client in clients.clients %}
         <tr>
             <td>
-                Client ID：{{client.id}}
+                Client ID：<br>{{client.id}}
             </td>
             <td>
-                <!--<div id="{{client.id}}">-->
-                <!--<div style="">-->
-                <!--<input type="file" id="{{client.id}}" name="{{client.id}}"/>-->
-                <!--</div>-->
-                <!--</div>-->
-                <!--<input class="input" type="button" onclick="addFileUploads('{{client.id}}')" value="添加"/>-->
-
-                压测脚本(可多选)：<br>
+                发送压测脚本：<br>
                 <input type="file" name="{{client.id}}" accept=".py" style="width:200px;" multiple><br>
                 {% if text == client.id %}
                     <textarea name="text{{client.id}}">{{script}}</textarea>
@@ -50,7 +37,7 @@
                     <input type="submit" name="send{{client.id}}" value="发送">
                 </div>
             </td>
-            <td>
+            <td>选择压测脚本：<br>
                 <input type="submit" name="filelist{{client.id}}" value="获取脚本列表"><input type="submit" name="clear{{client.id}}" value="清空文件夹" onclick="return confirm('确定清空脚本文件夹吗?')"><br>
                 {% for f in filelist %}
                     {% if f.id == client.id %}
@@ -64,7 +51,7 @@
             </td>
             <td>
                 设置压测进程数：<br>
-                <input type="number" name="num{{client.id}}" value="1" style="width:30px;">
+                <input type="number" name="num{{client.id}}" value="0" style="width:30px;">
                 <input type="submit" name="run{{client.id}}" value="{{client.state}}"><br>
                 当前压测进程数：{{client.slave_num}}
             </td>

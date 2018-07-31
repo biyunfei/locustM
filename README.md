@@ -1,7 +1,7 @@
 # locustM
 It is a web tool for schedule locust test of distributed locust clients;
 
-To run it on you computer, you should be install locustio==v0.8.1, Django==1.11.10, psutil==5.4.3 as first, now it support in python 2.x; or you can use the docker images which I maked in the docker hub: https://hub.docker.com/r/biyunfei/locust/
+To run it on you computer, you should be install locustio, Django==1.11.10, psutil==5.4.3 by PIP as first, now it support in python 2.x; or you can use the docker images which I maked in the docker hub: https://hub.docker.com/r/biyunfei/locust/
 
 There are two parts of this tools: Master and Slave;
 
