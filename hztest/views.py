@@ -13,6 +13,7 @@ import os.path
 import os
 from subprocess import Popen
 import psutil
+import platform
 
 locust_script = './hztest/rpc/script/internal-test.py'  # Locust master script file
 script_filename = 'internal-test.py'  # default script file name of client if don't select file from web
@@ -246,10 +247,17 @@ def hello(request):
                         if p.poll() is None:
                             try:
                                 # 先停止子进程再停止自身进程，Popen在容器中启动会有两个进程，一个是shell进程，另一个是应用进程
-                                procs = p.children()
+                                procs = p.children(recursive=True)
                                 for proc in procs:
-                                    proc.terminate()
-                                p.terminate()
+                                    if platform.system() == "Windows":
+                                        proc.send_signal(0)
+                                    else:
+                                        proc.terminate()
+                                    proc.wait()
+                                if platform.system() == "Windows":
+                                    p.send_signal(0)
+                                else:
+                                    p.terminate()
                                 p.wait()
                                 p = None
                                 logger.info("Server: locust master stopped!")
