@@ -26,6 +26,7 @@ Slave:
 
 # Run docker images:
 **Master:**
-	docker run -p 8000:8000 -p 6666:6666 -p 6667:6667 -p 5557:5557 -p 5558:5558 -p 8089:8089 -it --rm locust:master
+		docker run -p 8000:8000 -p 6666:6666 -p 6667:6667 -p 5557:5557 -p 5558:5558 -p 8089:8089 -it --rm locust:master
+
 **Slave:**
-	docker run -e HOST={MASTER_IP} -it --rm locust:slave
+		docker run -e HOST={MASTER_IP} -it --rm locust:slave
